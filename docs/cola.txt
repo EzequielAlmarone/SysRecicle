@@ -1,0 +1,34 @@
+# Formulario de upload
+enctype="multipart/form-data"
+
+# 
+ALTER USER 'chiquitto'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';
+
+# Consultar dados no BD
+$sql = "Select * From categoria Where idcategoria = :idcategoria";
+$preparado = $conn->prepare($sql);
+$preparado->bindValue(':idcategoria', $idCategoria);
+$preparado->execute();
+if ($linha = $preparado->fetch()) {
+  $categoria = $linha['categoria'];
+  $descricao = $linha['descricao'];
+} else {
+  // Erro
+}
+
+# Apagar registros
+$sql = "DELETE FROM categoria WHERE idcategoria = :idcategoria";
+$preparado = $conn->prepare($sql);
+$preparado->bindValue(':idcategoria', $idCategoria);
+$preparado->execute();
+
+# Cadastrar registro
+$sql = "INSERT INTO categoria (categoria, descricao, situacao)
+VALUES (:valor1, :valor2, :valor3)";
+$preparado = $conn->prepare($sql);
+$preparado->bindValue(':valor1', $categoria);
+$preparado->bindValue(':valor2', $descricao);
+$preparado->bindValue(':valor3', CATEGORIA_ATIVO);
+$preparado->execute();
+
+$idcategoria = $conn->lastInsertId();
